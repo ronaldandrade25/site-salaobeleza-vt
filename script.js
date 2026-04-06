@@ -567,13 +567,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDgaoVZK-5TF5xDFulLISridU9IXbmEYgg",
-  authDomain: "barbearia-agenda-fe2a7.firebaseapp.com",
-  projectId: "barbearia-agenda-fe2a7",
-  storageBucket: "barbearia-agenda-fe2a7.firebasestorage.app",
-  messagingSenderId: "876658896099",
-  appId: "1:876658896099:web:6a361416ed84fd636f29d6",
-  measurementId: "G-NJ4ETW1TNZ"
+ apiKey: "AIzaSyDtQzqXUxf6ZS8KeO4ybUuzUytxOwB_jnc",
+  authDomain: "studio-beleza-45b1d.firebaseapp.com",
+  projectId: "studio-beleza-45b1d",
+  storageBucket: "studio-beleza-45b1d.firebasestorage.app",
+  messagingSenderId: "824436361158",
+  appId: "1:824436361158:web:66f96585cf4fd505bfd4c7"
 };
 
 const app = initializeApp(firebaseConfig);
