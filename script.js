@@ -633,6 +633,7 @@ async function carregarProfissionais() {
         nome: (d.nome || '').trim(),
         fotoUrl: (d.fotoUrl || d.foto || '').trim(),
         whatsapp: (d.whatsapp || d.wa || '').trim(),
+        ativo: d.ativo !== false,
         colecao: (d.colecao || d.collection || (d.slug ? `reservas_${d.slug}` : '')).trim(),
         fimExpediente: (d.fimExpediente || d.fim || d.horarioFim || '').trim() || null,
         diasFolga: Array.isArray(d.diasFolga) ? d.diasFolga : (Array.isArray(d.folgas) ? d.folgas : null),
@@ -640,7 +641,7 @@ async function carregarProfissionais() {
     });
 
     arr.sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'));
-    PROFISSIONAIS_REMOTE = arr.filter(p => p.nome && p.colecao);
+    PROFISSIONAIS_REMOTE = arr.filter(p => p.ativo && p.nome && p.colecao);
   } catch (e) {
     console.warn('[PROFISSIONAIS] Não foi possível carregar profissionais:', e);
     PROFISSIONAIS_REMOTE = null;
@@ -659,21 +660,14 @@ function renderProfissionaisNoSite() {
   const container = document.getElementById('profissionaisContainer');
   if (!container) return;
 
-  const lista = Array.isArray(PROFISSIONAIS_REMOTE) && PROFISSIONAIS_REMOTE.length
-    ? PROFISSIONAIS_REMOTE
-    : [
-      {
-        id: '',
-        nome: 'Rodrigo dos Anjos',
-        fotoUrl: './assets/ra-rodrigo.jpg',
-        whatsapp: '5581985082010',
-        colecao: 'reservas_rodrigotorre2',
-        fimExpediente: '18:30',
-        diasFolga: [0]
-      }
-    ];
+  const lista = Array.isArray(PROFISSIONAIS_REMOTE) ? PROFISSIONAIS_REMOTE : [];
 
   container.innerHTML = '';
+
+  if (!lista.length) {
+    container.innerHTML = '<p class="muted">Nenhum profissional disponível no momento.</p>';
+    return;
+  }
 
   lista.forEach((p) => {
     const card = document.createElement('div');
@@ -1036,7 +1030,7 @@ confirmarBtn?.addEventListener('click', async () => {
       data,
       hora: hhmm,
 
-      profissional: ctx.profissionalId || 'rodrigotorre2',
+      profissional: ctx.profissionalId || '',
       profissionalNome: ctx.profissionalNome || null,
 
       clienteNome: agendamentoContexto.nomeCliente,
@@ -1340,7 +1334,7 @@ reaConfirmarBtn?.addEventListener('click', async () => {
         const payloadNew = buildPayloadFromOld(base, {
           data: novaData,
           hora: novaHora,
-          profissionalId: ctx.profissionalId || 'rodrigotorre2',
+          profissionalId: ctx.profissionalId || '',
           profissionalNome: ctx.profissionalNome || null,
           reagendadoDe: refAntigo.id
         });
@@ -1350,7 +1344,7 @@ reaConfirmarBtn?.addEventListener('click', async () => {
         const payloadSame = buildPayloadFromOld(base, {
           data: novaData,
           hora: novaHora,
-          profissionalId: ctx.profissionalId || 'rodrigotorre2',
+          profissionalId: ctx.profissionalId || '',
           profissionalNome: ctx.profissionalNome || null,
           reagendadoDe: refAntigo.id
         });
@@ -1373,7 +1367,7 @@ reaConfirmarBtn?.addEventListener('click', async () => {
         const payload = buildPayloadFromOld(base, {
           data: novaData,
           hora: novaHora,
-          profissionalId: ctx.profissionalId || 'rodrigotorre2',
+          profissionalId: ctx.profissionalId || '',
           profissionalNome: ctx.profissionalNome || null,
           reagendadoDe: refAntigo.id
         });
@@ -1387,7 +1381,7 @@ reaConfirmarBtn?.addEventListener('click', async () => {
         const payload = buildPayloadFromOld(base, {
           data: novaData,
           hora: novaHora,
-          profissionalId: ctx.profissionalId || 'rodrigotorre2',
+          profissionalId: ctx.profissionalId || '',
           profissionalNome: ctx.profissionalNome || null,
           reagendadoDe: refAntigo.id
         });
