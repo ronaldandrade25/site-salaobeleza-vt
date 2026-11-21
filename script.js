@@ -179,25 +179,7 @@ function restaurarContextoSessao() {
   } catch { }
 }
 
-function tentarRetomarPosCheckout() {
-  const flag = sessionStorage.getItem('raclubCheckoutRedirect');
-  if (flag === '1') {
-    sessionStorage.removeItem('raclubCheckoutRedirect');
-    restaurarContextoSessao();
-
-    if (ctx?.colecao && (ctx?.profissionalNome || ctx?.profissionalId)) {
-      agendamentoContexto.raclub = { status: 'assinar_link' };
-      fecharModal('modalRAClub');
-      abrirModalAgendamento();
-    }
-  }
-}
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') tentarRetomarPosCheckout();
-});
-
-// ===== Fluxo Nome → RA Club → Agendamento =====
+// ===== Fluxo Nome → Agendamento =====
 const nomeClienteInput = document.getElementById('nomeCliente');
 const sobrenomeClienteInput = document.getElementById('sobrenomeCliente');
 const telefoneClienteInput = document.getElementById('telefoneCliente');
@@ -231,39 +213,8 @@ document.getElementById('btnClienteContinuar')?.addEventListener('click', () => 
   agendamentoContexto.telefoneCliente = telDigits.startsWith('55') ? telDigits : ('55' + telDigits);
 
   fecharModal('modalCliente');
-  abrirModalRAClub();
-});
-
-// ===== RA Club =====
-const btnRAJaMembro = document.getElementById('btnRAJaMembro');
-const btnRANao = document.getElementById('btnRANao');
-const btnRAAssinar = document.getElementById('btnRAAssinar');
-
-function abrirModalRAClub() {
-  abrirModal('modalRAClub');
-}
-
-btnRAJaMembro?.addEventListener('click', () => {
-  agendamentoContexto.raclub = { status: 'membro' };
-  fecharModal('modalRAClub');
   abrirModalAgendamento();
 });
-
-btnRANao?.addEventListener('click', () => {
-  agendamentoContexto.raclub = { status: 'nao' };
-  fecharModal('modalRAClub');
-  abrirModalAgendamento();
-});
-
-if (btnRAAssinar) {
-  const RA_CLUB_CHECKOUT_URL = btnRAAssinar.getAttribute('href') || '';
-  btnRAAssinar.addEventListener('click', () => {
-    agendamentoContexto.raclub = { status: 'assinar_link' };
-    salvarContextoSessao();
-    sessionStorage.setItem('raclubCheckoutRedirect', '1');
-    if (!RA_CLUB_CHECKOUT_URL) alert('Link de checkout não configurado.');
-  });
-}
 
 // ===== Regras de horários =====
 const STEP_MIN = 30;
@@ -1058,10 +1009,6 @@ confirmarBtn?.addEventListener('click', async () => {
       ? `${agendamentoContexto.servico.nome} (${toBRL(agendamentoContexto.servico.valor)})`
       : '—';
 
-    let raclubTxt = "Não";
-    if (agendamentoContexto.raclub.status === 'membro') raclubTxt = "Membro";
-    else if (agendamentoContexto.raclub.status === 'assinar' || agendamentoContexto.raclub.status === 'assinar_link') raclubTxt = "Deseja assinar";
-
     if (confResumo) {
       confResumo.innerHTML = `
         <div class="line"><span class="label">Cliente:</span><span>${nomeCompleto}</span></div>
@@ -1070,7 +1017,6 @@ confirmarBtn?.addEventListener('click', async () => {
         <div class="line"><span class="label">Data:</span><span>${dataBR}</span></div>
         <div class="line"><span class="label">Hora:</span><span>${hhmm}</span></div>
         <div class="line"><span class="label">Serviço:</span><span>${servicoTxt}</span></div>
-        <div class="line"><span class="label">RA Club:</span><span>${raclubTxt}</span></div>
       `;
     }
 
